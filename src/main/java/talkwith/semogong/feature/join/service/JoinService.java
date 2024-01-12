@@ -4,5 +4,5 @@ import talkwith.semogong.feature.join.dto.JoinRequestDto;
 
 public interface JoinService {
 
-    public void joinUser(JoinRequestDto joinRequestDto) throws Exception;
+    void joinUser(JoinRequestDto joinRequestDto) throws Exception;
 }

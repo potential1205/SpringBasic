@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import talkwith.semogong.domain.UserEntity;
 import talkwith.semogong.feature.join.repository.JoinRepository;
-
 import java.util.Optional;
 
 import static talkwith.semogong.domain.QUserEntity.userEntity;

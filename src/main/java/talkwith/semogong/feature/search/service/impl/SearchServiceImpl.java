@@ -3,6 +3,7 @@ package talkwith.semogong.feature.search.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import talkwith.semogong.feature.search.exception.NotExistsUserByName;
 import talkwith.semogong.domain.UserEntity;
 import talkwith.semogong.feature.search.dto.SearchUserRequestDto;
 import talkwith.semogong.feature.search.dto.SearchUserResponseDto;
@@ -19,24 +20,24 @@ public class SearchServiceImpl implements SearchService {
     private final SearchRepository searchRepository;
 
     @Override
-    public SearchUserResponseDto searchUser(SearchUserRequestDto searchUserRequestDto) throws Exception {
+    public SearchUserResponseDto searchUser(SearchUserRequestDto searchUserRequestDto) throws NotExistsUserByName {
 
         String name = searchUserRequestDto.getName();
 
         Optional<UserEntity> userByName = searchRepository.findUserEntityByName(name);
 
         if (userByName.isEmpty()){
-            throw new Exception("feature/search/service/searchUser : 회원 이름과 일치하는 회원을 발견하지 못했습니다.");
+            throw NotExistsUserByName.builder()
+                    .message("이름이 '" + name + "'인 회원을 찾을 수 없습니다.")
+                    .build();
         }
 
         UserEntity userEntity = userByName.get();
 
-        SearchUserResponseDto searchUserResponseDto = SearchUserResponseDto.builder()
+        return SearchUserResponseDto.builder()
                 .name(userEntity.getName())
                 .rank(userEntity.getRank())
                 .age(userEntity.getAge())
                 .build();
-
-        return searchUserResponseDto;
     }
 }
