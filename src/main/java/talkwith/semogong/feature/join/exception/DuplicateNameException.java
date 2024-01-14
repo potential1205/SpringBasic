@@ -1,15 +1,16 @@
 package talkwith.semogong.feature.join.exception;
 
-import lombok.Builder;
 import lombok.Getter;
+import talkwith.semogong.common.exception.BusinessException;
 
 @Getter
-@Builder
-public class DuplicateNameException extends Exception{
+public class DuplicateNameException extends BusinessException {
 
-    private String message;
-    public DuplicateNameException(String message) {
-        this.message = message;
+    public DuplicateNameException(ErrorCode errorCode, String message) {
+        super(errorCode, message);
     }
 
+    public DuplicateNameException(ErrorCode errorCode) {
+        super(errorCode);
+    }
 }
