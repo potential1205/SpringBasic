@@ -7,6 +7,7 @@ import talkwith.semogong.common.enums.Rank;
 import talkwith.semogong.feature.join.exception.DuplicateNameException;
 import talkwith.semogong.domain.UserEntity;
 import talkwith.semogong.feature.join.dto.JoinRequestDto;
+import talkwith.semogong.feature.join.exception.ErrorCode;
 import talkwith.semogong.feature.join.repository.JoinRepository;
 import talkwith.semogong.feature.join.service.JoinService;
 
@@ -29,9 +30,7 @@ public class JoinServiceImpl implements JoinService {
         Optional<UserEntity> userEntityByName = joinRepository.findUserEntityByName(name);
 
         if (userEntityByName.isPresent()) {
-            throw DuplicateNameException.builder()
-                    .message("이미 존재하는 회원이름입니다.")
-                    .build();
+            throw new DuplicateNameException(ErrorCode.USER_COMMON_FAIL, "이미 존재한 회원 이름입니다.");
         }
 
         UserEntity userEntity = UserEntity.builder()
