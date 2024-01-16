@@ -3,6 +3,7 @@ package talkwith.semogong.feature.join.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import talkwith.semogong.common.enums.ExceptionInfo;
 import talkwith.semogong.common.enums.Rank;
 import talkwith.semogong.feature.join.exception.DuplicateNameException;
 import talkwith.semogong.domain.UserEntity;
@@ -22,6 +23,7 @@ public class JoinServiceImpl implements JoinService {
     @Override
     @Transactional
     public void joinUser(JoinRequestDto joinRequestDto) throws DuplicateNameException {
+
         String name = joinRequestDto.getName();
         String password = joinRequestDto.getPassword();
         int age = joinRequestDto.getAge();
@@ -29,9 +31,7 @@ public class JoinServiceImpl implements JoinService {
         Optional<UserEntity> userEntityByName = joinRepository.findUserEntityByName(name);
 
         if (userEntityByName.isPresent()) {
-            throw DuplicateNameException.builder()
-                    .message("이미 존재하는 회원이름입니다.")
-                    .build();
+            throw new DuplicateNameException(ExceptionInfo.RESOURCE_CONFLICT, "이미 등록된 사용자 이름입니다.");
         }
 
         UserEntity userEntity = UserEntity.builder()

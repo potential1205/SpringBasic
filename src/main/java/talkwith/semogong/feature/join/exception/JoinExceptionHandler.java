@@ -1,29 +1,44 @@
 package talkwith.semogong.feature.join.exception;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import talkwith.semogong.common.dto.ResponseDto;
+import talkwith.semogong.common.dto.Response.FailResponse;
+import talkwith.semogong.common.enums.ExceptionInfo;
+
+import java.util.Optional;
 
 @RestControllerAdvice(basePackages = "talkwith.semogong.feature.join")
 public class JoinExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<ResponseDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
-        BindingResult bindingResult = ex.getBindingResult();
-        String message = bindingResult.getFieldError().getDefaultMessage();
+    protected ResponseEntity<FailResponse> methodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        ExceptionInfo exceptionInfo = ExceptionInfo.PARAMETER_VALID_FAIL;
+
+        BindingResult bindingResult = exception.getBindingResult();
+        Optional<FieldError> fieldError = Optional.ofNullable(bindingResult.getFieldError());
+
+        if (fieldError.isEmpty()){
+            throw new RuntimeException();
+        }
+
+        String exceptionMessage = fieldError.get().getDefaultMessage();
+
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ResponseDto(message));
+                .status(exceptionInfo.getHttpStatus())
+                .body(FailResponse.of(exceptionMessage, exceptionInfo.getCode()));
     }
 
     @ExceptionHandler({DuplicateNameException.class})
-    protected ResponseEntity<ResponseDto> handleDuplicateNameException(DuplicateNameException ex){
+    protected ResponseEntity<FailResponse> handleDuplicateNameException(DuplicateNameException exception){
+        ExceptionInfo exceptionInfo = exception.getExceptionInfo();
+        String exceptionMessage = exception.getCustomMessage();
+
         return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(new ResponseDto(ex.getMessage()));
+                .status(exceptionInfo.getHttpStatus())
+                .body(FailResponse.of(exceptionMessage,exceptionInfo.getCode()));
     }
 }

@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import talkwith.semogong.common.enums.Rank;
 
-
 @Entity
 @Getter
 @Builder
@@ -23,6 +22,7 @@ public class UserEntity {
     @Enumerated(value = EnumType.STRING)
     private Rank rank;
     private int age;
+    private String role;
 
     public UserEntity() {
     }

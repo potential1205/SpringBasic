@@ -1,13 +1,14 @@
 package talkwith.semogong.feature.search.exception;
 
-import lombok.Builder;
 import lombok.Getter;
+import talkwith.semogong.common.enums.ExceptionInfo;
+import talkwith.semogong.common.exception.BusinessException;
 
 @Getter
-@Builder
-public class NotExistsUserByName extends Exception{
-    private String message;
-    public NotExistsUserByName(String message) {
-        this.message = message;
+public class NotExistsUserByName extends BusinessException {
+
+    public NotExistsUserByName(ExceptionInfo exceptionInfo, String message) {
+        super(exceptionInfo, message);
     }
+
 }

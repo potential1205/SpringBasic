@@ -29,6 +29,8 @@ public class QUserEntity extends EntityPathBase<UserEntity> {
 
     public final EnumPath<talkwith.semogong.common.enums.Rank> rank = createEnum("rank", talkwith.semogong.common.enums.Rank.class);
 
+    public final StringPath role = createString("role");
+
     public QUserEntity(String variable) {
         super(UserEntity.class, forVariable(variable));
     }

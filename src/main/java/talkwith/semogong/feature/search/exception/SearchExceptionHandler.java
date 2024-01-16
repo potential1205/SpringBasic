@@ -1,24 +1,43 @@
 package talkwith.semogong.feature.search.exception;
 
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import talkwith.semogong.common.dto.ResponseDto;
+import talkwith.semogong.common.dto.Response.FailResponse;
+import talkwith.semogong.common.enums.ExceptionInfo;
+
+import java.util.Optional;
 
 @RestControllerAdvice(basePackages = "talkwith.semogong.feature.search")
 public class SearchExceptionHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    protected ResponseEntity<ResponseDto> MethodArgumentNotValidException(MethodArgumentNotValidException ex){
-        return new ResponseEntity<>(new ResponseDto(ex.getMessage()), new HttpHeaders(), HttpStatus.NOT_FOUND);
+    protected ResponseEntity<FailResponse> MethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        ExceptionInfo exceptionInfo = ExceptionInfo.PARAMETER_VALID_FAIL;
+
+        BindingResult bindingResult = exception.getBindingResult();
+        Optional<FieldError> fieldError = Optional.ofNullable(bindingResult.getFieldError());
+
+        if (fieldError.isEmpty()){
+            throw new RuntimeException();
+        }
+
+        String exceptionMessage = fieldError.get().getDefaultMessage();
+
+        return ResponseEntity.status(exceptionInfo.getHttpStatus())
+                .body(FailResponse.of(exceptionMessage, exceptionInfo.getCode()));
     }
 
     @ExceptionHandler({NotExistsUserByName.class})
-    protected ResponseEntity<ResponseDto> handleNotExistsUserByName(NotExistsUserByName ex){
-        return new ResponseEntity<>(new ResponseDto(ex.getMessage()), new HttpHeaders(), HttpStatus.NOT_FOUND);
+    protected ResponseEntity<FailResponse> handleNotExistsUserByName(NotExistsUserByName exception){
+        ExceptionInfo exceptionInfo = exception.getExceptionInfo();
+        String exceptionMessage = exception.getCustomMessage();
+
+        return ResponseEntity
+                .status(exceptionInfo.getHttpStatus())
+                .body(FailResponse.of(exceptionMessage, exceptionInfo.getCode()));
     }
 }
