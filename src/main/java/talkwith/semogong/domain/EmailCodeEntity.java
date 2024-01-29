@@ -1,30 +1,24 @@
 package talkwith.semogong.domain;
 
-import jakarta.persistence.*;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import talkwith.semogong.common.enums.Rank;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserEntity {
+public class EmailCodeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="user_id")
-    private int id;
+    private Long id;
     private String email;
-    private String name;
-    private String password;
-
-    @Enumerated(value = EnumType.STRING)
-    private Rank rank;
-    private String role;
-
+    private String code;
 }

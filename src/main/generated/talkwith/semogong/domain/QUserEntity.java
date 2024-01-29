@@ -19,7 +19,7 @@ public class QUserEntity extends EntityPathBase<UserEntity> {
 
     public static final QUserEntity userEntity = new QUserEntity("userEntity");
 
-    public final NumberPath<Integer> age = createNumber("age", Integer.class);
+    public final StringPath email = createString("email");
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 

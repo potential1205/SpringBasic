@@ -12,5 +12,4 @@ public class MetaData {
     public MetaData(int totalCount){
         this.totalCount = totalCount;
     }
-
 }

@@ -1,4 +1,4 @@
-package talkwith.semogong.feature.join.exception;
+package talkwith.semogong.feature.login.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -8,15 +8,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import talkwith.semogong.common.dto.Response.FailResponse;
 import talkwith.semogong.common.enums.ExceptionInfo;
-import talkwith.semogong.common.exception.ResourceConflictException;
+import talkwith.semogong.common.exception.AuthenticationFailException;
+import talkwith.semogong.common.exception.ResourceNotFoundException;
 
 import java.util.Optional;
 
-@RestControllerAdvice(basePackages = "talkwith.semogong.feature.join")
-public class JoinExceptionHandler {
+@RestControllerAdvice(basePackages = "talkwith.semogong.feature.login")
+public class LoginExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<FailResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    protected ResponseEntity<FailResponse> methodArgumentNotValidException(MethodArgumentNotValidException exception) {
         ExceptionInfo exceptionInfo = ExceptionInfo.PARAMETER_VALIDATION_FAIL;
 
         BindingResult bindingResult = exception.getBindingResult();
@@ -33,8 +34,8 @@ public class JoinExceptionHandler {
                 .body(FailResponse.of(exceptionMessage, exceptionInfo.getCode()));
     }
 
-    @ExceptionHandler({ResourceConflictException.class})
-    protected ResponseEntity<FailResponse> handleResourceConflictException(ResourceConflictException exception){
+    @ExceptionHandler({ResourceNotFoundException.class})
+    protected ResponseEntity<FailResponse> handleNotExistsUserByNameException(ResourceNotFoundException exception){
         ExceptionInfo exceptionInfo = exception.getExceptionInfo();
         String exceptionMessage = exception.getCustomMessage();
 
@@ -42,4 +43,15 @@ public class JoinExceptionHandler {
                 .status(exceptionInfo.getHttpStatus())
                 .body(FailResponse.of(exceptionMessage,exceptionInfo.getCode()));
     }
+
+    @ExceptionHandler({AuthenticationFailException.class})
+    protected ResponseEntity<FailResponse> handleNotCorrectPasswordException(AuthenticationFailException exception){
+        ExceptionInfo exceptionInfo = exception.getExceptionInfo();
+        String exceptionMessage = exception.getCustomMessage();
+
+        return ResponseEntity
+                .status(exceptionInfo.getHttpStatus())
+                .body(FailResponse.of(exceptionMessage,exceptionInfo.getCode()));
+    }
+
 }
